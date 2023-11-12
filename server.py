@@ -1,6 +1,6 @@
 import socket
 import threading
-
+from blockchain import Block, Blockchain
 def handle_client(connection, address):
     print(f"New connection from {address}")
     # Handle client connection and messages here

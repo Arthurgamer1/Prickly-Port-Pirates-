@@ -49,7 +49,9 @@ class Blockchain:
         # Display the entire blockchain
         for block in self.chain:
             print(f"Block {self.chain.index(block)}: {block.__dict__}")
-
+'''below is code just to test the classes. uncomment and run this file if you wish to 
+see the simple blockchain in operation'''
+'''
 # Create a new blockchain
 blockchain = Blockchain()
 
@@ -62,4 +64,6 @@ validity = blockchain.is_chain_valid()
 chain = blockchain.display_chain()
 
 validity, chain
+'''
+
 
