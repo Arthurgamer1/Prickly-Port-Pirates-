@@ -11,7 +11,7 @@ class P2PNode:
         self.port = port
         self.sockets = []
         self.blockchain = Blockchain()  # Initialize the blockchain
-
+        self.executor = ThreadPoolExecutor(max_workers=10)
     def start_server(self):
         # Start a server to accept connections
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -22,12 +22,15 @@ class P2PNode:
         print("Server is Running")
 
     def accept_connections(self, server):
-        #limits the threads run at one time to 10 for connections
-        with ThreadPoolExecutor(max_workers=10) as executor: 
-            while True:
+       while True:
+            try:
                 conn, addr = server.accept()
+                print(f"Accepted connection from {addr}")
                 self.sockets.append(conn)
-                threading.Thread(target=self.handle_client, args=(conn,)).start()
+                self.executor.submit(self.handle_client, conn)  # Submit to the executor
+            except Exception as e:
+                print(f"Error accepting connections: {e}")
+                break
 
     def connect_to_node(self, host, port):
         # Connect to another node
@@ -40,24 +43,45 @@ class P2PNode:
             try:
                 message = conn.recv(1024).decode()
                 if message:
-                    # Add message to blockchain
-                    new_block = Block(time.time(), message)
-                    self.blockchain.add_block(new_block)
-                    self.broadcast_blockchain()
+                    recieved_chain = json.loads(message)
+                    #update local blockchain and display message
+                    self.update_and_display_new_blocks(recieved_chain)
                 else:
                     break
-            except:
-                continue
+            except Exception as e:
+                print(f"Error processing recieved data? {e})")
+                break
         conn.close()
 
+    def update_and_display_new_blocks(self, received_chain):
+        new_blocks = [Block(block_dict['timestamp'], block_dict['data'], block_dict['previous_hash']) for block_dict in received_chain]
+        if self.blockchain.replace_chain(new_blocks):
+            # Assuming the new chain is longer and valid, display new messages
+            for i in range(len(self.blockchain.chain)):
+                block = self.blockchain.chain[i]
+                print(f"Block {i} | New message received: {block.data}")
+
     def broadcast_blockchain(self):
-        # Broadcast updated blockchain to all connected nodes
+        # Serialize the entire blockchain and send it to all connected nodes
+        blockchain_data = json.dumps([block.__dict__ for block in self.blockchain.chain])
         for socket in self.sockets:
             try:
-                socket.send(json.dumps([block.__dict__ for block in self.blockchain.chain]).encode())
+                socket.send(blockchain_data.encode())
             except:
                 pass
 
+    def send_message(self, message):
+        # Add the message to the blockchain
+        new_block = Block(time.time(), message)
+        self.blockchain.add_block(new_block)
+        # Broadcast the updated blockchain
+        self.broadcast_blockchain()
+    
+    def shutdown(self):
+        # Call this method to cleanly shut down the node
+        self.executor.shutdown(wait=True)
+        for sock in self.sockets:
+            sock.close()
 # Example usage
 #node1 = P2PNode('localhost', 8000)
 #node1.start_server()

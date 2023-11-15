@@ -30,12 +30,20 @@ class Blockchain:
         new_block.previous_hash = self.get_latest_block().hash
         new_block.hash = new_block.calculate_hash()
         self.chain.append(new_block)
+    
+    def replace_chain(self, new_chain):
+        if len(new_chain) > len(self.chain) and self.is_chain_valid(new_chain):
+            self.chain = new_chain
+            return True
+        return False
 
-    def is_chain_valid(self):
+    def is_chain_valid(self, chain=None):
+        # Validate the passed chain or the current chain if none is passed
+        chain_to_check = chain if chain else self.chain
         # Check if the blockchain is valid
-        for i in range(1, len(self.chain)):
-            current_block = self.chain[i]
-            previous_block = self.chain[i - 1]
+        for i in range(1, len(chain_to_check)):
+            current_block = chain_to_check[i]
+            previous_block = chain_to_check[i - 1]
 
             if current_block.hash != current_block.calculate_hash():
                 return False
