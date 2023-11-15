@@ -2,7 +2,7 @@ import socket
 import threading
 import json
 import time
-from blockchain import Block, Blockchain  # Assuming the blockchain module is provided separately
+from blockchain import Block, Blockchain 
 from concurrent.futures import ThreadPoolExecutor
 
 class P2PNode:
@@ -12,14 +12,14 @@ class P2PNode:
         self.sockets = []
         self.blockchain = Blockchain()  # Initialize the blockchain
 
-    def start_server(self, host, port):
+    def start_server(self):
         # Start a server to accept connections
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.bind((self.host, self.port))
         server.listen(5)
         threading.Thread(target=self.accept_connections, args=(server,)).start()
         # Confirmation message to ensure server is running
-        print(f"Server is listening on {host}:{port}")
+        print("Server is Running")
 
     def accept_connections(self, server):
         #limits the threads run at one time to 10 for connections
@@ -59,11 +59,11 @@ class P2PNode:
                 pass
 
 # Example usage
-node1 = P2PNode('localhost', 8000)
-node1.start_server()
+#node1 = P2PNode('localhost', 8000)
+#node1.start_server()
 
-node2 = P2PNode('localhost', 8001)
-node2.start_server()
+#node2 = P2PNode('localhost', 8001)
+#node2.start_server()
 
 # To connect to another node, use node.connect_to_node('other_host', other_port)
-node2.connect_to_node('localhost', 8000)
+#node2.connect_to_node('localhost', 8000)
