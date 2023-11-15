@@ -7,9 +7,11 @@ sock.bind(('localhost', 55555))
 
 while True:
     clients = []
-
+    usernames = []
     while True:
         data, address = sock.recvfrom(128)
+        usernames.append(data.decode())
+        print(usernames)
 
         print('connection from: {}'.format(address))
         clients.append(address)
@@ -22,8 +24,10 @@ while True:
 
     c1 = clients.pop()
     c1_addr, c1_port = c1
+    user1 = usernames.pop()
     c2 = clients.pop()
     c2_addr, c2_port = c2
+    user2 = usernames.pop()
 
-    sock.sendto('{} {} {}'.format(c1_addr, c1_port, known_port).encode(), c2)
-    sock.sendto('{} {} {}'.format(c2_addr, c2_port, known_port).encode(), c1)
+    sock.sendto('{} {} {} {}'.format(c1_addr, c1_port, known_port, user1).encode(), c2)
+    sock.sendto('{} {} {} {}'.format(c2_addr, c2_port, known_port, user2).encode(), c1)
