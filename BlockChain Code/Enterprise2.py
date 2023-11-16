@@ -1,7 +1,22 @@
 from P2P import P2PNode
+import threading
 
-node2 = P2PNode('localhost', 8001)
-node2.start_server()
 
-# To connect to another node, use node.connect_to_node('other_host', other_port)
-node2.connect_to_node('localhost', 8000)
+if __name__ == "__main__":
+    # Initialize and start the node server
+    node = P2PNode('localhost', 8001)  # Use appropriate port for each node
+    node.start_server()
+
+    # Connect to other node
+    node.connect_to_node('localhost', 8000)
+
+    # Start chat interface in a new thread
+    chat_thread = threading.Thread(target=node.start_chat_interface)
+    chat_thread.start()
+
+    try:
+        while True:
+            pass  # Keep the main thread alive
+    except KeyboardInterrupt:
+        print("Shutting down...")
+        node.shutdown()
