@@ -29,7 +29,7 @@ class P2PNode:
                 connection, address = self.socket.accept()
                 if connection:
                     self.connections.append(connection)
-                    print(f"Accepted connection from {address}\n> ", end="")
+                    print(f"Accepted connection from {address}\n> [{self.username}]: ", end="")
                     threading.Thread(target=self.handle_client, args=(connection, address), daemon=True).start()
             except socket.error:
                 break  # Socket was closed, exit the loop
@@ -58,13 +58,13 @@ class P2PNode:
                 data = connection.recv(1024)
                 if not data:
                     break
-                print(f"Received data from {address}: {data.decode()}\n> ", end="")
+                print(f"\n> Message from {data.decode()}\n> [{self.username}]: ", end="")
             except socket.error:
                 break
 
     def start_chat_interface(self):
         while True:
-            message = input("> ")
+            message = input(f"> [{self.username}]: ")
             self.send_message(message)
 
     def shutdown(self):
