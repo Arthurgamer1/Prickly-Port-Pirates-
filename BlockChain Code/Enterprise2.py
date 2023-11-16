@@ -1,10 +1,10 @@
 from P2P import P2PNode
 import threading
 
-
 if __name__ == "__main__":
     # Initialize and start the node server
-    node = P2PNode('localhost', 8001)  # Use appropriate port for each node
+    username = input("Enter  your username: ")
+    node = P2PNode('localhost', 8001, username)  # Use appropriate port for each node
     node.start_server()
 
     # Connect to other node

@@ -8,9 +8,10 @@ import socket
 import threading
 
 class P2PNode:
-    def __init__(self, host, port):
+    def __init__(self, host, port, username):
         self.host = host
         self.port = port
+        self.username = username
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.connections = [] 
@@ -43,6 +44,7 @@ class P2PNode:
             print(f"Failed to connect to {peer_host}:{peer_port}. Error: {e}")
 
     def send_message(self, message):
+        message = f"{self.username}: {message}"
         for connection in self.connections:
             try:
                 connection.sendall(message.encode())
