@@ -1,8 +1,23 @@
 import hashlib #used for creating hashes for reference (chain)
 import time
+from datetime import datetime
 
 class Block:
+    
     def __init__(self, timestamp, data, previous_hash=''):
+        '''
+        Summary: This block class contructor is used to create a block
+        with time, data, and the previous hash value of the block.
+        
+        Parameters:
+        timestamp: the time at which the block is created
+        data: this is where transactional data is stored, in our case text messages
+        previous_hash: this is the chain variable which holds the hash value of the
+        previous block. This represents the chain
+        hash: also has it's own hash which is calculated using sha256.
+
+        Returns: no returned value. 
+        '''
         self.timestamp = timestamp
         self.data = data
         self.previous_hash = previous_hash
@@ -46,12 +61,16 @@ class Blockchain:
         return True
 
     def display_chain(self):
-        # Display the entire blockchain
+         # Display the entire blockchain
         for block in self.chain:
-            print(f"Block {self.chain.index(block)}: {block.__dict__}")
+            # Convert timestamp to human-readable format
+            readable_timestamp = datetime.fromtimestamp(block.timestamp).strftime('%Y-%m-%d %H:%M:%S')
+            print(f"Block {self.chain.index(block)}: Timestamp: {readable_timestamp}, Data: {block.data}, Hash: {block.hash}, Previous Hash: {block.previous_hash}")
+
 '''below is code just to test the classes. uncomment and run this file if you wish to 
 see the simple blockchain in operation'''
-'''
+
+
 # Create a new blockchain
 blockchain = Blockchain()
 
@@ -64,6 +83,5 @@ validity = blockchain.is_chain_valid()
 chain = blockchain.display_chain()
 
 validity, chain
-'''
 
 
