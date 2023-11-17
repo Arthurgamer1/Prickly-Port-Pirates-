@@ -1,7 +1,7 @@
 import hashlib #used for creating hashes for reference (chain)
 import time
 from datetime import datetime
-
+import json
 class Block:
     
     def __init__(self, timestamp, data, previous_hash=''):
@@ -66,7 +66,10 @@ class Blockchain:
             # Convert timestamp to human-readable format
             readable_timestamp = datetime.fromtimestamp(block.timestamp).strftime('%Y-%m-%d %H:%M:%S')
             print(f"Block {self.chain.index(block)}: Timestamp: {readable_timestamp}, Data: {block.data}, Hash: {block.hash}, Previous Hash: {block.previous_hash}")
-
+    
+    def save_to_file(self, filename="blockchain.json"):
+        with open(filename, "w") as file:
+            json.dump([block.__dict__ for block in self.chain], file, indent=4)
 '''below is code just to test the classes. uncomment and run this file if you wish to 
 see the simple blockchain in operation'''
 
