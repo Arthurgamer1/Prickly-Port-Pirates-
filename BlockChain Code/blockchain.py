@@ -1,6 +1,7 @@
 import hashlib #used for creating hashes for reference (chain)
 import time
 from datetime import datetime
+import json
 
 class Block:
     
@@ -27,10 +28,20 @@ class Block:
         # Calculate the hash of the block
         block_data = str(self.timestamp) + str(self.data) + str(self.previous_hash)
         return hashlib.sha256(block_data.encode()).hexdigest()
+    
+    def to_dict(self):
+        block_dict = {}
+        block_dict["timestamp"] = self.timestamp
+        block_dict["data"] = self.data
+        block_dict["previous_hash"] = self.previous_hash
+        block_dict["hash"] = self.hash
 
 class Blockchain:
-    def __init__(self):
-        self.chain = [self.create_genesis_block()]
+    def __init__(self, existing_chain=None):
+        if(existing_chain != None):
+            self.convert_dict_to_blockchain(existing_chain)
+        else:
+            self.chain = [self.create_genesis_block()]
 
     def create_genesis_block(self):
         # Manually construct a block with no previous hash
@@ -40,10 +51,15 @@ class Blockchain:
         # Retrieve the most recent block in the chain
         return self.chain[-1]
 
-    def convert_json_to_blockchain(self):
-        #todo
-        #[block.__dict__ for block in blockchain.chain]
-        pass
+    def convert_dict_to_blockchain(self, to_convert):
+        if(type(to_convert) is str):
+            to_convert = json.loads(to_convert)
+
+        new_chain = []
+        for block in to_convert:
+            block = Block(block["timestamp"], block["data"], previous_hash=block["previous_hash"])
+            new_chain.append(block)
+        self.chain = new_chain
 
     def add_block(self, new_block):
         # Add a new block if valid

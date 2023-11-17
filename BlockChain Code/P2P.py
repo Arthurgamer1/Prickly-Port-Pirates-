@@ -15,6 +15,9 @@ class P2PNode:
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connections = [] 
         self.running = True
+        with open("blockchain.json", "r") as blockchain_file:
+            self.blockchain = Blockchain(existing_chain=blockchain_file.read())
+
 
     #starts the peer server for connecting to other peers
     def start_server(self):
@@ -52,7 +55,7 @@ class P2PNode:
         for connection in self.connections:
             try:
                 connection.sendall(message.encode())
-                self.broadcast_block(message, connection)
+                self.broadcast_blockchain(message, connection)
             except socket.error as e:
                 print(f"Failed to send message. Error: {e}")
                 self.connections.remove(connection)
@@ -65,8 +68,17 @@ class P2PNode:
                 if not data:
                     break
                 print(f"\n> Message from {data.decode()}\n> [{self.username}]: ", end="")
-                new_blockchain = connection.recv(1024)
-                #write received blockchain to json file
+
+                #made recv size as large as it can go
+                new_blockchain = connection.recv(1048576).decode()
+                #writes received message as new blockchain
+                with open("blockchain.json", "w") as blockchain_file:
+                    new_blockchain = json.loads(new_blockchain)
+                    new_blockchain = json.dumps(new_blockchain, indent=2)
+                    blockchain_file.write(new_blockchain)
+                    print(new_blockchain)
+                    self.blockchain = Blockchain(existing_chain=new_blockchain)
+
                 
             except socket.error:
                 break
@@ -77,18 +89,17 @@ class P2PNode:
             message = input(f"> [{self.username}]: ")
             self.send_message(message)
 
-    def brodcast_block(self, message, connection):
-        with open("blockchain.json", "r") as loaded_blockchain:
-            new_blockchain = loaded_blockchain.read()
-            new_blockchain = json.loads(new_blockchain)
-        new_block = Block(time.time(), message)
-        new_blockchain.add_block(new_block)
-        
-        #make a way to load .json file into a blockcahin object
 
-        #write back to json file
-        new_blockchain = json.dumps(new_blockchain)
-        connection.sendall(new_blockchain.endode())
+    def broadcast_blockchain(self, message, connection):
+        
+        new_block = Block(time.time(), message)
+        self.blockchain.add_block(new_block)
+        
+        with open("blockchain.json", "w") as blockchain_file:
+            blockchain_string = json.dumps(self.blockchain.blockchain_to_dict())
+            blockchain_file.write(blockchain_string)
+
+        connection.sendall(blockchain_string.encode())
 
 
 
