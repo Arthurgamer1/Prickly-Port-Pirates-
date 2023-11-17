@@ -13,7 +13,6 @@ class P2PNode:
         self.port = port
         self.username = username
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.connections = [] 
         self.running = True
 
@@ -23,7 +22,7 @@ class P2PNode:
         self.socket.listen(5)
         print(f"Listening for connections on {self.host}:{self.port}")
         #creates a new thread to handle new connections
-        threading.Thread(target=self.accept_connections, daemon=True).start()
+        threading.Thread(target=self.accept_connections).start()
     
     #accepts incoming connections
     def accept_connections(self):

@@ -70,7 +70,7 @@ class Blockchain:
 '''below is code just to test the classes. uncomment and run this file if you wish to 
 see the simple blockchain in operation'''
 
-
+'''
 # Create a new blockchain
 blockchain = Blockchain()
 
@@ -83,5 +83,5 @@ validity = blockchain.is_chain_valid()
 chain = blockchain.display_chain()
 
 validity, chain
-
+'''
 
