@@ -75,7 +75,7 @@ class P2PNode:
                     new_blockchain = json.loads(new_blockchain)
                     new_blockchain = json.dumps(new_blockchain, indent=2)
                     blockchain_file.write(new_blockchain)
-                    print(new_blockchain)
+                    print(new_blockchain, f"\n> [{self.username}]: ", end="")
                     self.blockchain = Blockchain(existing_chain=new_blockchain)
             except socket.error:
                 break
