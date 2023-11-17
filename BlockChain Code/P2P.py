@@ -55,7 +55,7 @@ class P2PNode:
         for connection in self.connections:
             try:
                 connection.sendall(message.encode())
-                self.broadcast_blockchain(message, connection)
+                self.broadcast_block(message, connection)
             except socket.error as e:
                 print(f"Failed to send message. Error: {e}")
                 self.connections.remove(connection)
@@ -70,27 +70,44 @@ class P2PNode:
                 print(f"\n> Message from {data.decode()}\n> [{self.username}]: ", end="")
 
                 #made recv size as large as it can go
-                new_blockchain = connection.recv(1048576).decode()
-                #writes received message as new blockchain
+                new_block = connection.recv(1024).decode()
+                new_block = json.loads(new_block)
+                new_block = Block(new_block["timestamp"], new_block["data"])
+                self.blockchain.add_block(new_block)
+
                 with open("blockchain.json", "w") as blockchain_file:
-                    new_blockchain = json.loads(new_blockchain)
-                    new_blockchain = json.dumps(new_blockchain, indent=2)
-                    blockchain_file.write(new_blockchain)
-                    print(new_blockchain)
-                    self.blockchain = Blockchain(existing_chain=new_blockchain)
+                    #test_hash = new_block.calculate_hash()
+                    to_write = json.dumps(self.blockchain.blockchain_to_dict(), indent=2)
+                    blockchain_file.write(to_write)
+                
+
+
+                #writes received message as new blockchain
+                # with open("blockchain.json", "w") as blockchain_file:
+                #     new_blockchain = json.loads(new_blockchain)
+                #     new_blockchain = json.dumps(new_blockchain, indent=2)
+                #     blockchain_file.write(new_blockchain)
+                #     print(new_blockchain)
+                #     self.blockchain = Blockchain(existing_chain=new_blockchain)
 
                 
             except socket.error:
                 break
     
+
     #used for user input of message. 
     def start_chat_interface(self):
         while True:
             message = input(f"> [{self.username}]: ")
-            self.send_message(message)
+            if(message == "is_valid"):
+                print(self.blockchain.is_chain_valid())
+            elif(message == "display_chain"):
+                self.blockchain.display_chain()
+            else:
+                self.send_message(message)
 
 
-    def broadcast_blockchain(self, message, connection):
+    def broadcast_block(self, message, connection):
         
         new_block = Block(time.time(), message)
         self.blockchain.add_block(new_block)
@@ -99,7 +116,7 @@ class P2PNode:
             blockchain_string = json.dumps(self.blockchain.blockchain_to_dict())
             blockchain_file.write(blockchain_string)
 
-        connection.sendall(blockchain_string.encode())
+        connection.sendall(json.dumps(new_block.dict_to_block()).encode())
 
 
 

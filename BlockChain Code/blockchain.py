@@ -29,12 +29,16 @@ class Block:
         block_data = str(self.timestamp) + str(self.data) + str(self.previous_hash)
         return hashlib.sha256(block_data.encode()).hexdigest()
     
-    def to_dict(self):
+    def dict_to_block(self):
         block_dict = {}
         block_dict["timestamp"] = self.timestamp
         block_dict["data"] = self.data
         block_dict["previous_hash"] = self.previous_hash
         block_dict["hash"] = self.hash
+
+        return block_dict
+    
+
 
 class Blockchain:
     def __init__(self, existing_chain=None):

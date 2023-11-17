@@ -1,1 +1,26 @@
-[{"timestamp": 1700203985.8804572, "data": "Genesis Block", "previous_hash": "0", "hash": "19cfa7b5af3e6c36df1c86f98857481ac1c01298db52b2cc34604c4b2345fc29"}]
+[
+  {
+    "timestamp": 1700207982.9150195,
+    "data": "Genesis Block",
+    "previous_hash": "0",
+    "hash": "daabf3ef83f50f287d858d4b26432adf80178314098067bf4b1c5075434b570f"
+  },
+  {
+    "timestamp": 1700207991.28269,
+    "data": "connor2: hello",
+    "previous_hash": "daabf3ef83f50f287d858d4b26432adf80178314098067bf4b1c5075434b570f",
+    "hash": "9b630c28a782dd5fb9449530bf5f18176a2d36c6bb91e09cc0e0a3e08a6658a7"
+  },
+  {
+    "timestamp": 1700207994.698796,
+    "data": "connor2: is this thing on",
+    "previous_hash": "9b630c28a782dd5fb9449530bf5f18176a2d36c6bb91e09cc0e0a3e08a6658a7",
+    "hash": "4a24e733441749eee45d2bb45da9dc53d6918b23f34591fe5cd3245413848777"
+  },
+  {
+    "timestamp": 1700208055.464403,
+    "data": "connor2: hi",
+    "previous_hash": "4a24e733441749eee45d2bb45da9dc53d6918b23f34591fe5cd3245413848777",
+    "hash": "c011ff36465cbfc5d18ee1bd634f8c43e166ca36d5d929f4967c5b0b0199c639"
+  }
+]
