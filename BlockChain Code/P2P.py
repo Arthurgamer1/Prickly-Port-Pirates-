@@ -3,10 +3,10 @@ import threading
 import json
 import time
 from blockchain import Block, Blockchain 
-
 import socket
 import threading
 
+#Peer2Peer class for instantiating each node
 class P2PNode:
     def __init__(self, host, port, username):
         self.host = host
@@ -17,12 +17,15 @@ class P2PNode:
         self.connections = [] 
         self.running = True
 
+    #starts the peer server for connecting to other peers
     def start_server(self):
         self.socket.bind((self.host, self.port))
         self.socket.listen(5)
         print(f"Listening for connections on {self.host}:{self.port}")
+        #creates a new thread to handle new connections
         threading.Thread(target=self.accept_connections, daemon=True).start()
-
+    
+    #accepts incoming connections
     def accept_connections(self):
         while self.running:
             try:
@@ -33,7 +36,8 @@ class P2PNode:
                     threading.Thread(target=self.handle_client, args=(connection, address), daemon=True).start()
             except socket.error:
                 break  # Socket was closed, exit the loop
-
+    
+    #connects to other nodes given thier host and port
     def connect_to_node(self, peer_host, peer_port):
         try:
             connection = socket.create_connection((peer_host, peer_port))
@@ -43,6 +47,7 @@ class P2PNode:
         except socket.error as e:
             print(f"Failed to connect to {peer_host}:{peer_port}. Error: {e}")
 
+    #used to send message to another peer.
     def send_message(self, message):
         message = f"{self.username}: {message}"
         for connection in self.connections:
@@ -52,6 +57,7 @@ class P2PNode:
                 print(f"Failed to send message. Error: {e}")
                 self.connections.remove(connection)
 
+    #handles recieving message from another peer
     def handle_client(self, connection, address):
         while self.running:
             try:
@@ -61,13 +67,15 @@ class P2PNode:
                 print(f"\n> Message from {data.decode()}\n> [{self.username}]: ", end="")
             except socket.error:
                 break
-
+    
+    #used for user input of message. 
     def start_chat_interface(self):
         while True:
             message = input(f"> [{self.username}]: ")
             self.send_message(message)
 
     def shutdown(self):
+        #not probably needed, but a function to shutdown the node
         self.running = False
         for conn in self.connections:
             conn.close()
