@@ -64,6 +64,8 @@ class P2PNode:
         for connection in self.connections:
             try:
                 connection.sendall(message.encode())
+                strt_time = time.time()
+                connection.sendall(str(strt_time).encode())
             except socket.error as e:
                 print(f"Failed to send message. Error: {e}")
                 self.connections.remove(connection)
@@ -73,10 +75,14 @@ class P2PNode:
         while self.running:
             try:
                 data = connection.recv(1024)
+                strt_time = connection.recv(1024)
+                end_time = time.time()
+                exc_time = end_time - float(strt_time)
                 if not data:
                     break
                 print(
-                    f"\n> Message from {data.decode()}\n> [{self.username}]: ", end=""
+                    f"\n> Message from {data.decode()}\n> [{self.username}] (Delay: {exc_time} ms): ",
+                    end="",
                 )
             except socket.error:
                 break

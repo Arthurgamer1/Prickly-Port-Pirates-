@@ -1,14 +1,14 @@
-import hashlib #used for creating hashes for reference (chain)
+import hashlib  # used for creating hashes for reference (chain)
 import time
 from datetime import datetime
 
+
 class Block:
-    
-    def __init__(self, timestamp, data, previous_hash=''):
-        '''
+    def __init__(self, timestamp, data, previous_hash=""):
+        """
         Summary: This block class contructor is used to create a block
         with time, data, and the previous hash value of the block.
-        
+
         Parameters:
         timestamp: the time at which the block is created
         data: this is where transactional data is stored, in our case text messages
@@ -16,8 +16,8 @@ class Block:
         previous block. This represents the chain
         hash: also has it's own hash which is calculated using sha256.
 
-        Returns: no returned value. 
-        '''
+        Returns: no returned value.
+        """
         self.timestamp = timestamp
         self.data = data
         self.previous_hash = previous_hash
@@ -27,6 +27,7 @@ class Block:
         # Calculate the hash of the block
         block_data = str(self.timestamp) + str(self.data) + str(self.previous_hash)
         return hashlib.sha256(block_data.encode()).hexdigest()
+
 
 class Blockchain:
     def __init__(self):
@@ -61,16 +62,21 @@ class Blockchain:
         return True
 
     def display_chain(self):
-         # Display the entire blockchain
+        # Display the entire blockchain
         for block in self.chain:
             # Convert timestamp to human-readable format
-            readable_timestamp = datetime.fromtimestamp(block.timestamp).strftime('%Y-%m-%d %H:%M:%S')
-            print(f"Block {self.chain.index(block)}: Timestamp: {readable_timestamp}, Data: {block.data}, Hash: {block.hash}, Previous Hash: {block.previous_hash}")
+            readable_timestamp = datetime.fromtimestamp(block.timestamp).strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
+            print(
+                f"Block {self.chain.index(block)}: Timestamp: {readable_timestamp}, Data: {block.data}, Hash: {block.hash}, Previous Hash: {block.previous_hash}"
+            )
 
-'''below is code just to test the classes. uncomment and run this file if you wish to 
-see the simple blockchain in operation'''
 
-'''
+"""below is code just to test the classes. uncomment and run this file if you wish to 
+see the simple blockchain in operation"""
+
+"""
 # Create a new blockchain
 blockchain = Blockchain()
 
@@ -83,5 +89,4 @@ validity = blockchain.is_chain_valid()
 chain = blockchain.display_chain()
 
 validity, chain
-'''
-
+"""
