@@ -78,10 +78,11 @@ class P2PNode:
                 strt_time = connection.recv(1024)
                 end_time = time.time()
                 exc_time = end_time - float(strt_time)
+                exc_time *= 1000
                 if not data:
                     break
                 print(
-                    f"\n> Message from {data.decode()}\n> [{self.username}] (Delay: {exc_time} ms): ",
+                    f"\n> Message from {data.decode()}\n> [{self.username}] (Delay: {round(exc_time)} ms): ",
                     end="",
                 )
             except socket.error:
