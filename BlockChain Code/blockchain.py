@@ -42,6 +42,7 @@ class Blockchain:
 
     def convert_json_to_blockchain(self):
         #todo
+        #[block.__dict__ for block in blockchain.chain]
         pass
 
     def add_block(self, new_block):
@@ -63,6 +64,9 @@ class Blockchain:
                 return False
 
         return True
+
+    def blockchain_to_dict(self):
+        return [block.__dict__ for block in self.chain]
 
     def display_chain(self):
          # Display the entire blockchain
