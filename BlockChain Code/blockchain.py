@@ -29,7 +29,7 @@ class Block:
         block_data = str(self.timestamp) + str(self.data) + str(self.previous_hash)
         return hashlib.sha256(block_data.encode()).hexdigest()
     
-    def to_dict(self):
+    def to_dict(self):   
         block_dict = {}
         block_dict["timestamp"] = self.timestamp
         block_dict["data"] = self.data
@@ -54,7 +54,6 @@ class Blockchain:
     def convert_dict_to_blockchain(self, to_convert):
         if(type(to_convert) is str):
             to_convert = json.loads(to_convert)
-
         new_chain = []
         for block in to_convert:
             block = Block(block["timestamp"], block["data"], previous_hash=block["previous_hash"])
@@ -78,7 +77,6 @@ class Blockchain:
 
             if current_block.previous_hash != previous_block.hash:
                 return False
-
         return True
 
     def blockchain_to_dict(self):

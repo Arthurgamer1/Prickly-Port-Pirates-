@@ -1,1 +1,20 @@
-[{"timestamp": 1700203985.8804572, "data": "Genesis Block", "previous_hash": "0", "hash": "19cfa7b5af3e6c36df1c86f98857481ac1c01298db52b2cc34604c4b2345fc29"}]
+[
+  {
+    "timestamp": 1700246447.8291647,
+    "data": "Genesis Block",
+    "previous_hash": "0",
+    "hash": "699072d913822342f2bf3e061eedce22a2b8f60c62114a0c1ec6b51d41ad8aca"
+  },
+  {
+    "timestamp": 1700247036.3182173,
+    "data": "connor1: hello",
+    "previous_hash": "699072d913822342f2bf3e061eedce22a2b8f60c62114a0c1ec6b51d41ad8aca",
+    "hash": "94781a493226f87518b6a2208eb8e5506da330f9ccf5d6486c36f4a02682f19f"
+  },
+  {
+    "timestamp": 1700247053.0828347,
+    "data": "connor2: hello",
+    "previous_hash": "94781a493226f87518b6a2208eb8e5506da330f9ccf5d6486c36f4a02682f19f",
+    "hash": "d27e98bff280350e7c431d712474336b72c032ec020152d18981442014c35d03"
+  }
+]

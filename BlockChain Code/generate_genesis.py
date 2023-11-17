@@ -1,6 +1,5 @@
 from blockchain import Block, Blockchain
 import json
-import time
 
 new_blockchain = Blockchain()
 
