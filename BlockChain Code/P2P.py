@@ -52,6 +52,7 @@ class P2PNode:
         for connection in self.connections:
             try:
                 connection.sendall(message.encode())
+                self.broadcast_block(message, connection)
             except socket.error as e:
                 print(f"Failed to send message. Error: {e}")
                 self.connections.remove(connection)
@@ -64,6 +65,9 @@ class P2PNode:
                 if not data:
                     break
                 print(f"\n> Message from {data.decode()}\n> [{self.username}]: ", end="")
+                new_blockchain = connection.recv(1024)
+                #write received blockchain to json file
+                
             except socket.error:
                 break
     
@@ -72,6 +76,25 @@ class P2PNode:
         while True:
             message = input(f"> [{self.username}]: ")
             self.send_message(message)
+
+    def brodcast_block(self, message, connection):
+        with open("blockchain.json", "r") as loaded_blockchain:
+            new_blockchain = loaded_blockchain.read()
+            new_blockchain = json.loads(new_blockchain)
+        new_block = Block(time.time(), message)
+        new_blockchain.add_block(new_block)
+        
+        #make a way to load .json file into a blockcahin object
+
+        #write back to json file
+        new_blockchain = json.dumps(new_blockchain)
+        connection.sendall(new_blockchain.endode())
+
+
+
+        
+
+
 
     def shutdown(self):
         #not probably needed, but a function to shutdown the node

@@ -40,6 +40,10 @@ class Blockchain:
         # Retrieve the most recent block in the chain
         return self.chain[-1]
 
+    def convert_json_to_blockchain(self):
+        #todo
+        pass
+
     def add_block(self, new_block):
         # Add a new block if valid
         new_block.previous_hash = self.get_latest_block().hash
