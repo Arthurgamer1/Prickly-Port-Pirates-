@@ -15,6 +15,7 @@ class P2PNode:
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connections = [] 
         self.running = True
+        self.blockchain = Blockchain()
 
     #starts the peer server for connecting to other peers
     def start_server(self):
@@ -48,6 +49,8 @@ class P2PNode:
 
     #used to send message to another peer.
     def send_message(self, message):
+        #add some logic here to add message to block....
+        #use broadcast block function here
         message = f"{self.username}: {message}"
         for connection in self.connections:
             try:
@@ -63,6 +66,8 @@ class P2PNode:
                 data = connection.recv(1024)
                 if not data:
                     break
+                #add some logic for interpreting block broadcast
+                #validate and add block function?
                 print(f"\n> Message from {data.decode()}\n> [{self.username}]: ", end="")
             except socket.error:
                 break
@@ -80,26 +85,32 @@ class P2PNode:
             conn.close()
         self.socket.close()
         print("Server shutdown completed.")
-
-#testing P2P class below
-'''
-if __name__ == "__main__":
-
-    # Example usage
-    node1 = P2PNode('localhost', 8000)
-    node1.start_server()
-
-    node2 = P2PNode('localhost', 8001)
-    node2.start_server()
-
-    time.sleep(1)
-
-    # To connect to another node, use node.connect_to_node('other_host', other_port)
-    node2.connect_to_node('localhost', 8000)
-    time.sleep(1)
     
-    #start chatting
-    chat_thread = threading.Thread(target=node2.start_chat_interface)
-    chat_thread.start()
+    #broadcasts block to rest of nodes
+    #def broadcast_block(self, block):
+        #need to brodcast blocks to all connections(nodes)
+        #failure message if you can't broadcast block
+    
+#testing P2P class below
+
+'''
+    if __name__ == "__main__":
+
+        # Example usage
+        node1 = P2PNode('localhost', 8000)
+        node1.start_server()
+
+        node2 = P2PNode('localhost', 8001)
+        node2.start_server()
+
+        time.sleep(1)
+
+        # To connect to another node, use node.connect_to_node('other_host', other_port)
+        node2.connect_to_node('localhost', 8000)
+        time.sleep(1)
+        
+        #start chatting
+        chat_thread = threading.Thread(target=node2.start_chat_interface)
+        chat_thread.start()
 
 '''
