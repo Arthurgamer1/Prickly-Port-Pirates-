@@ -3,6 +3,7 @@ import threading
 import json
 import time
 from blockchain import Block, Blockchain
+from TimeGraph import P2PGraph
 import socket
 import threading
 
@@ -15,7 +16,10 @@ class P2PNode:
         self.username = username
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connections = []
+        self.graph = P2PGraph(60)
         self.running = True
+        with open("blockchain.json", "r") as blockchain_file:
+            self.blockchain = Blockchain(existing_chain=blockchain_file.read())
 
     # starts the peer server for connecting to other peers
     def start_server(self):
@@ -44,7 +48,7 @@ class P2PNode:
             except socket.error:
                 break  # Socket was closed, exit the loop
 
-    # connects to other nodes given their host and port
+    # connects to other nodes given thier host and port
     def connect_to_node(self, peer_host, peer_port):
         try:
             connection = socket.create_connection((peer_host, peer_port))
@@ -58,14 +62,32 @@ class P2PNode:
         except socket.error as e:
             print(f"Failed to connect to {peer_host}:{peer_port}. Error: {e}")
 
+    # It creates a graph with a spam message specification named n_times
+    def bc_graph_test(self, n_times):
+        for i in range(n_times):
+            self.graph_send_message("TESTG")
+        self.graph.draw_graph()
+
+    # Copy of send message but for the graph
+    def graph_send_message(self, message):
+        message = f"{self.username}: {message}"
+        init_time = time.time()  # Start taking time for runtime
+        for connection in self.connections:
+            try:
+                connection.sendall(message.encode())
+                connection.sendall(str(init_time).encode())
+                self.broadcast_block(message, connection)
+            except socket.error as e:
+                print(f"Failed to send message. Error: {e}")
+                self.connections.remove(connection)
+
     # used to send message to another peer.
     def send_message(self, message):
         message = f"{self.username}: {message}"
         for connection in self.connections:
             try:
                 connection.sendall(message.encode())
-                strt_time = time.time()
-                connection.sendall(str(strt_time).encode())
+                self.broadcast_block(message, connection)
             except socket.error as e:
                 print(f"Failed to send message. Error: {e}")
                 self.connections.remove(connection)
@@ -75,16 +97,62 @@ class P2PNode:
         while self.running:
             try:
                 data = connection.recv(1024)
-                strt_time = connection.recv(1024)
-                end_time = time.time()
-                exc_time = end_time - float(strt_time)
-                exc_time *= 1000
+
+                if data == "TESTG":
+                    init_time = float(connection.recv(1024))
+                    print(
+                        f"\n> Message from {data.decode()}\n> [{self.username}]: ",
+                        end="",
+                    )
+
+                    # made recv size as large as it can go
+                    new_block = connection.recv(1024).decode()
+                    new_block = json.loads(new_block)
+                    new_block = Block(new_block["timestamp"], new_block["data"])
+                    self.blockchain.add_block(new_block)
+
+                    with open("blockchain.json", "w") as blockchain_file:
+                        # test_hash = new_block.calculate_hash()
+                        to_write = json.dumps(
+                            self.blockchain.blockchain_to_dict(), indent=2
+                        )
+                        blockchain_file.write(to_write)
+                    # Blockchain Runtime is calculated and display below
+                    end_time = time.time()
+                    ms_delay = (end_time - init_time) * 1000
+                    self.graph.add_times(ms_delay)
+                    print(
+                        f"\n \n Message added to registry block succesfully in {round(ms_delay)} ms. \n",
+                        end="",
+                    )
+
                 if not data:
                     break
                 print(
-                    f"\n> Message from {data.decode()}\n> [{self.username}] (Delay: {round(exc_time)} ms): ",
-                    end="",
+                    f"\n> Message from {data.decode()}\n> [{self.username}]: ", end=""
                 )
+
+                # made recv size as large as it can go
+                new_block = connection.recv(1024).decode()
+                new_block = json.loads(new_block)
+                new_block = Block(new_block["timestamp"], new_block["data"])
+                self.blockchain.add_block(new_block)
+
+                with open("blockchain.json", "w") as blockchain_file:
+                    # test_hash = new_block.calculate_hash()
+                    to_write = json.dumps(
+                        self.blockchain.blockchain_to_dict(), indent=2
+                    )
+                    blockchain_file.write(to_write)
+
+                # writes received message as new blockchain
+                # with open("blockchain.json", "w") as blockchain_file:
+                #     new_blockchain = json.loads(new_blockchain)
+                #     new_blockchain = json.dumps(new_blockchain, indent=2)
+                #     blockchain_file.write(new_blockchain)
+                #     print(new_blockchain)
+                #     self.blockchain = Blockchain(existing_chain=new_blockchain)
+
             except socket.error:
                 break
 
@@ -92,7 +160,24 @@ class P2PNode:
     def start_chat_interface(self):
         while True:
             message = input(f"> [{self.username}]: ")
-            self.send_message(message)
+            if message == "is_valid":
+                print(self.blockchain.is_chain_valid())
+            elif message == "display_chain":
+                self.blockchain.display_chain()
+            elif message == "GRAPH100":
+                self.bc_graph_test(100)
+            else:
+                self.send_message(message)
+
+    def broadcast_block(self, message, connection):
+        new_block = Block(time.time(), message)
+        self.blockchain.add_block(new_block)
+
+        with open("blockchain.json", "w") as blockchain_file:
+            blockchain_string = json.dumps(self.blockchain.blockchain_to_dict())
+            blockchain_file.write(blockchain_string)
+
+        connection.sendall(json.dumps(new_block.dict_to_block()).encode())
 
     def shutdown(self):
         # not probably needed, but a function to shutdown the node
