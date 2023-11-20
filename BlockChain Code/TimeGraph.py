@@ -55,7 +55,7 @@ with open("receiver_time_data.csv", "r") as file:
 
 for i in range(len(send_time) - 1):
     total = (float(send_time[i]) + float(receive_time[i])) * 1000
-    total = round(total)
+    total = round(total, 3)
     total_times.append(total)
 
 # x axis values
