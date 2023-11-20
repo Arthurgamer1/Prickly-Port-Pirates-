@@ -39,13 +39,28 @@ class P2PGraph:
             self.msg_times.pop(i)
 
 
-# Testing the class!
-"""
+# List Values for receive & send
+send_time = []
+receive_time = []
+total_times = []
+
+
+with open("sender_time_data.csv", "r") as file:
+    for line in file:
+        send_time.append(line)
+
+with open("receiver_time_data.csv", "r") as file:
+    for line in file:
+        receive_time.append(line)
+
+for i in range(len(send_time) - 1):
+    total = (float(send_time[i]) + float(receive_time[i])) * 1000
+    total = round(total)
+    total_times.append(total)
+
 # x axis values
 graph = P2PGraph(60)
 # corresponding y axis values
-for i in range(5):
-    # print(i)
-    graph.add_times(i)
+for x in range(len(total_times) - 1):
+    graph.add_times(total_times[i])
 graph.draw_graph()
-"""
