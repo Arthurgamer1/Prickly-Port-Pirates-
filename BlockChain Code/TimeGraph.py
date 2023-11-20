@@ -13,7 +13,7 @@ class P2PGraph:
 
     # Draws a graph with specific list of points
     def draw_graph(self):
-        fraction = 60 / self.x_msg_num
+        fraction = self.x_msg_num / self.x_msg_num
         x_list = 0
         time_x = []
         for i in range(len(self.msg_times)):
