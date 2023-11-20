@@ -1,4 +1,4 @@
-import socket, threading, json, time, socket, threading, select, csv
+import socket, threading, json, time, socket, threading, csv
 from blockchain import Block, Blockchain 
 
 #Peer2Peer class for instantiating each node
@@ -108,13 +108,24 @@ class P2PNode:
     def start_chat_interface(self):
         while True:
             message = input(f"> [{self.username}]: ")
-            if(message == "is_valid"):
+
+            if message.startswith("spam"): #starts spam function, input message folowed by minutes you want to runs
+                try:
+                    _, msgs_per_minute, duration = message.split()
+                    msgs_per_minute = int(msgs_per_minute)
+                    duration = int(duration)
+                    self.spam_messages(msgs_per_minute, duration)
+                except ValueError:
+                    print("Invalid spam command. Usage: spam [messages_per_minute] [duration_in_minutes]")
+            elif message == "is_valid": #allows you to check if the blockchain is valid
                 print(self.blockchain.is_chain_valid())
-            elif(message == "display_chain"):
+            elif message == "display_chain": #dislpays the current blockchain
                 self.blockchain.display_chain()
             else:
                 self.send_message(message)
 
+
+    #updates the blockchain and sends to all clients on blockchain.
     def broadcast_block(self, message, connection):
         new_block = Block(time.time(), message)
         self.blockchain.add_block(new_block)
@@ -124,6 +135,26 @@ class P2PNode:
             blockchain_file.write(blockchain_string)
 
         connection.sendall(json.dumps(new_block.dict_to_block()).encode())
+
+    def spam_messages(self, messages_per_minute, duration_minutes=1):
+        """
+        Spams a specified number of messages per minute for a given duration.
+
+        Args:
+        messages_per_minute (int): Number of messages to send per minute.
+        duration_minutes (int): Duration in minutes for the spamming to last.
+        """
+        total_messages = messages_per_minute * duration_minutes
+        interval = 60.0 / messages_per_minute  # Time interval between messages in seconds
+
+        print(f"Starting to spam {total_messages} messages ({messages_per_minute} messages/minute) for {duration_minutes} minute(s).")
+        
+        for _ in range(total_messages):
+            message = "Spam message"  # or generate a custom message
+            self.send_message(message)
+            time.sleep(interval)
+
+        print("Completed spamming messages.")
 
     def shutdown(self):
         #not probably needed, but a function to shutdown the node
