@@ -2,9 +2,10 @@ import matplotlib.pyplot as plt
 
 
 class P2PGraph:
-    def __init__(self, y_time):
+    # Initializa Function with specific # of messages sent
+    def __init__(self, x_num):
         self.msg_times = []
-        self.y_time = y_time
+        self.x_msg_num = x_num
 
     # Adds ms times to the list
     def add_times(self, time):
@@ -12,20 +13,19 @@ class P2PGraph:
 
     # Draws a graph with specific list of points
     def draw_graph(self):
-        # plotting the points
-        fraction = self.y_time / len(self.msg_times)
-        y_list = 0
-        time_y = []
+        fraction = 60 / self.x_msg_num
+        x_list = 0
+        time_x = []
         for i in range(len(self.msg_times)):
-            time_y.append(y_list)
-            y_list += fraction
+            time_x.append(x_list)
+            x_list += fraction
 
-        plt.plot(self.msg_times, time_y)
+        plt.plot(time_x, self.msg_times)
 
         # naming the x axis
-        plt.xlabel("x - Miliseconds")
+        plt.xlabel("x - # of messages")
         # naming the y axis
-        plt.ylabel("y - Minute")
+        plt.ylabel("y - milliseconds")
 
         # giving a title to my graph
         plt.title("Blockchain Runtime 1 min")
@@ -55,12 +55,13 @@ with open("receiver_time_data.csv", "r") as file:
 
 for i in range(len(send_time) - 1):
     total = (float(send_time[i]) + float(receive_time[i])) * 1000
-    total = round(total, 3)
+    total = round(total)
+    print(total)
     total_times.append(total)
 
 # x axis values
-graph = P2PGraph(60)
+graph = P2PGraph(100)
 # corresponding y axis values
 for x in range(len(total_times) - 1):
-    graph.add_times(total_times[i])
+    graph.add_times(total_times[x])
 graph.draw_graph()
