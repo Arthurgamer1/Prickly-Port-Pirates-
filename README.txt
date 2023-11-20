@@ -5,7 +5,8 @@ If you enter this file it may be for curiosity or finding out who we are. We are
 It is said that the One Piece can be found through exploring networks and between all only the most experiences can enter the Wired Blue network. Would this team be able to get the an A-pass through their computer networks class to chace the One Piece? Stay tuned to find out!
 
 Running the Main code:
-1. Open up the "BlockChain Code" folder
-2. run the Enterprise1.py script and enter a username
-3. run the Enterprise2.py script and enter a username (preferrably not the same name)
-4. Start chatting between terminals!
+1. run the "generate_genesis.py" file to create the blockchain. (this will add the genesis block to the blockchain.json file.)
+2. Open up the "BlockChain Code" folder
+3. run the Enterprise1.py script and enter a username
+4. run the Enterprise2.py script and enter a username (preferrably not the same name)
+5. Start chatting between terminals!
