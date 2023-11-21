@@ -82,9 +82,8 @@ class Blockchain:
 
             if current_block.previous_hash != previous_block.hash:
                 return False
-
         return True
-
+    
     def blockchain_to_dict(self):
         return [block.__dict__ for block in self.chain]
 

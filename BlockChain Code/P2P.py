@@ -124,32 +124,26 @@ class P2PNode:
         while True:
             message = input(f"> [{self.username}]: ")
 
-            if message.startswith(
-                "spam"
-            ):  # starts spam function, input message folowed by minutes you want to runs
+            if message.startswith("spam"): #starts spam function, input message folowed by minutes you want to runs
                 try:
                     _, msgs_per_minute, duration = message.split()
                     msgs_per_minute = int(msgs_per_minute)
                     duration = int(duration)
                     self.spam_messages(msgs_per_minute, duration)
                 except ValueError:
-                    print(
-                        "Invalid spam command. Usage: spam [messages_per_minute] [duration_in_minutes]"
-                    )
-            elif (
-                message == "is_valid"
-            ):  # allows you to check if the blockchain is valid
+                    print("Invalid spam command. Usage: spam [messages_per_minute] [duration_in_minutes]")
+            elif message == "is_valid": #allows you to check if the blockchain is valid
                 print(self.blockchain.is_chain_valid())
-            elif message == "display_chain":  # dislpays the current blockchain
+            elif message == "display_chain": #dislpays the current blockchain
                 self.blockchain.display_chain()
             else:
                 self.send_message(message)
 
-    # updates the blockchain and sends to all clients on blockchain.
+    #updates the blockchain and sends to all clients on blockchain.
     def broadcast_block(self, message, connection):
         new_block = Block(time.time(), message)
         self.blockchain.add_block(new_block)
-
+        
         with open("blockchain.json", "w") as blockchain_file:
             blockchain_string = json.dumps(self.blockchain.blockchain_to_dict())
             blockchain_file.write(blockchain_string)
@@ -165,14 +159,10 @@ class P2PNode:
         duration_minutes (int): Duration in minutes for the spamming to last.
         """
         total_messages = messages_per_minute * duration_minutes
-        interval = (
-            60.0 / messages_per_minute
-        )  # Time interval between messages in seconds
+        interval = 60.0 / messages_per_minute  # Time interval between messages in seconds
 
-        print(
-            f"Starting to spam {total_messages} messages ({messages_per_minute} messages/minute) for {duration_minutes} minute(s)."
-        )
-
+        print(f"Starting to spam {total_messages} messages ({messages_per_minute} messages/minute) for {duration_minutes} minute(s).")
+        
         for _ in range(total_messages):
             message = "Spam message"  # or generate a custom message
             self.send_message(message)
