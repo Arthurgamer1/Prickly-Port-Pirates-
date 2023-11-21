@@ -10,8 +10,8 @@ It is said that the One Piece can be found through exploring networks and betwee
 pip install scikit-learn
 pip install matplotlib
 ```
-2. run the "generate_genesis.py" file to create the blockchain. (this will add the genesis block to the blockchain.json file.)
-3. Open up the "BlockChain Code" folder
+2.  Open up the "BlockChain Code" folder
+3. run the "generate_genesis.py" file to create the blockchain. (this will add the genesis block to the blockchain.json file.)
 4. run the "RunEnterprises.bat" file to get both Enterprises running on two terminals.
 5. Start chatting between terminals!
 
