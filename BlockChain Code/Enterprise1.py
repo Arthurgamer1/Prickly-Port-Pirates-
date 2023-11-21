@@ -4,8 +4,7 @@ import threading
 if __name__ == "__main__":
     # Initialize and start the node server
     #username = input("Enter your username: ")
-
-    username = "connor1"
+    username = "robot1"
 
     node = P2PNode('localhost', 8000, username)  # Use appropriate port for each node
     node.start_server()

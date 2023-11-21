@@ -39,13 +39,13 @@ class Block:
         return block_dict
     
 
-
 class Blockchain:
     def __init__(self, existing_chain=None):
         if(existing_chain != None):
             self.convert_dict_to_blockchain(existing_chain)
         else:
             self.chain = [self.create_genesis_block()]
+        self.measure_times = []
 
     def create_genesis_block(self):
         # Manually construct a block with no previous hash
@@ -82,7 +82,6 @@ class Blockchain:
 
             if current_block.previous_hash != previous_block.hash:
                 return False
-
         return True
 
     def blockchain_to_dict(self):
