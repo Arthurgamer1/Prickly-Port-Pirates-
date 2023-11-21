@@ -1,50 +1,61 @@
 import socket, threading, json, time, socket, threading, csv
-from blockchain import Block, Blockchain 
+from blockchain import Block, Blockchain
 
-#Peer2Peer class for instantiating each node
+
+# Peer2Peer class for instantiating each node
 class P2PNode:
     def __init__(self, host, port, username):
         self.host = host
         self.port = port
         self.username = username
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.connections = [] 
+        self.connections = []
         self.running = True
         with open("blockchain.json", "r") as blockchain_file:
             self.blockchain = Blockchain(existing_chain=blockchain_file.read())
 
-
-    #starts the peer server for connecting to other peers
+    # starts the peer server for connecting to other peers
     def start_server(self):
         self.socket.bind((self.host, self.port))
         self.socket.listen(5)
         print(f"Listening for connections on {self.host}:{self.port}")
-        #creates a new thread to handle new connections
+        # creates a new thread to handle new connections
         threading.Thread(target=self.accept_connections).start()
-    
-    #accepts incoming connections
+
+    # accepts incoming connections
     def accept_connections(self):
         while self.running:
             try:
                 connection, address = self.socket.accept()
                 if connection:
                     self.connections.append(connection)
-                    print(f"Accepted connection from {address}\n> [{self.username}]: ", end="")
-                    threading.Thread(target=self.handle_client, args=(connection, address), daemon=True).start()
+                    print(
+                        f"Accepted connection from {address}\n> [{self.username}]: ",
+                        end="",
+                    )
+                    threading.Thread(
+                        target=self.handle_client,
+                        args=(connection, address),
+                        daemon=True,
+                    ).start()
             except socket.error:
                 break  # Socket was closed, exit the loop
-    
-    #connects to other nodes given thier host and port
+
+    # connects to other nodes given thier host and port
     def connect_to_node(self, peer_host, peer_port):
         try:
             connection = socket.create_connection((peer_host, peer_port))
             self.connections.append(connection)
             print(f"Connected to {peer_host}:{peer_port}")
-            threading.Thread(target=self.handle_client, args=(connection, (peer_host, peer_port)), daemon=True).start()
+            threading.Thread(
+                target=self.handle_client,
+                args=(connection, (peer_host, peer_port)),
+                daemon=True,
+            ).start()
         except socket.error as e:
             print(f"Failed to connect to {peer_host}:{peer_port}. Error: {e}")
 
-    #used to send message to another peer.
+    # used to send message to another peer.
     def send_message(self, message):
         start_time = time.time()
         message = f"{self.username}: {message}"
@@ -59,24 +70,26 @@ class P2PNode:
                 print(f"Failed to send message. Error: {e}")
                 self.connections.remove(connection)
 
-        #measure time reciever and sender take to validate the blockchain
+        # measure time reciever and sender take to validate the blockchain
         end_time = time.time()
         time_taken = end_time - start_time
 
-        #log time data into CSV
-        with open("sender_time_data.csv", "a", newline='') as file:
+        # log time data into CSV
+        with open("sender_time_data.csv", "a", newline="") as file:
             writer = csv.writer(file)
             writer.writerow([time_taken])
-        
-    #handles recieving message from another peer
+
+    # handles recieving message from another peer
     def handle_client(self, connection, address):
         while self.running:
             try:
                 data = connection.recv(1024)
                 if not data:
                     break
-                start_time = time.time() #recieving message tim
-                print(f"\n> Message from {data.decode()}\n> [{self.username}]: ", end="")
+                start_time = time.time()  # recieving message tim
+                print(
+                    f"\n> Message from {data.decode()}\n> [{self.username}]: ", end=""
+                )
 
                 new_block = connection.recv(1024).decode()
                 new_block = json.loads(new_block)
@@ -84,27 +97,29 @@ class P2PNode:
                 self.blockchain.add_block(new_block)
 
                 if not self.blockchain.is_chain_valid():
-                        print("Blockchain validation failed at receiver.")
-                        return  # Stop the process if validation fails
+                    print("Blockchain validation failed at receiver.")
+                    return  # Stop the process if validation fails
 
                 with open("blockchain.json", "w") as blockchain_file:
-                    #test_hash = new_block.calculate_hash()
-                    to_write = json.dumps(self.blockchain.blockchain_to_dict(), indent=2)
+                    # test_hash = new_block.calculate_hash()
+                    to_write = json.dumps(
+                        self.blockchain.blockchain_to_dict(), indent=2
+                    )
                     blockchain_file.write(to_write)
-                
-                #log time taken
+
+                # log time taken
                 end_time = time.time()
                 time_taken = end_time - start_time
-                
+
                 # log time in csv
-                with open("receiver_time_data.csv", "a", newline='') as file:
+                with open("receiver_time_data.csv", "a", newline="") as file:
                     writer = csv.writer(file)
                     writer.writerow([time_taken])
 
             except socket.error:
                 break
 
-    #used for user input of message. 
+    # used for user input of message.
     def start_chat_interface(self):
         while True:
             message = input(f"> [{self.username}]: ")
@@ -123,7 +138,6 @@ class P2PNode:
                 self.blockchain.display_chain()
             else:
                 self.send_message(message)
-
 
     #updates the blockchain and sends to all clients on blockchain.
     def broadcast_block(self, message, connection):
@@ -157,7 +171,7 @@ class P2PNode:
         print("Completed spamming messages.")
 
     def shutdown(self):
-        #not probably needed, but a function to shutdown the node
+        # not probably needed, but a function to shutdown the node
         self.running = False
         for conn in self.connections:
             conn.close()
