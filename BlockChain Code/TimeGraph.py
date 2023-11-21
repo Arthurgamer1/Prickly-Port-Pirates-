@@ -1,4 +1,6 @@
 import matplotlib.pyplot as plt
+import numpy as np
+from sklearn.linear_model import LinearRegression
 
 
 class P2PGraph:
@@ -20,7 +22,31 @@ class P2PGraph:
             time_x.append(x_list)
             x_list += fraction
 
-        plt.plot(time_x, self.msg_times)
+        # Sample data
+        x = np.array(time_x)  # X-axis values
+        y = np.array(self.msg_times)  # Y-axis values
+
+        # Reshape x for sklearn LinearRegression
+        x_reshaped = x.reshape(-1, 1)
+
+        # Fit the linear regression model
+        model = LinearRegression()
+        model.fit(x_reshaped, y)
+
+        # Make predictions using the model
+        predictions = model.predict(x_reshaped)
+
+        plt.scatter(time_x, self.msg_times, color="blue", label="Scatter Plot")
+
+        plt.plot(
+            x,
+            predictions,
+            color="red",
+            linestyle="--",
+            label="Average",
+        )
+
+        plt.legend()
 
         # naming the x axis
         plt.xlabel("x - # of messages")
