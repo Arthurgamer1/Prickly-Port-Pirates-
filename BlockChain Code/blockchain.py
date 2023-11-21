@@ -94,21 +94,3 @@ class Blockchain:
             readable_timestamp = datetime.fromtimestamp(block.timestamp).strftime('%Y-%m-%d %H:%M:%S')
             print(f"Block {self.chain.index(block)}: Timestamp: {readable_timestamp}, Data: {block.data}, Hash: {block.hash}, Previous Hash: {block.previous_hash}")
 
-'''below is code just to test the classes. uncomment and run this file if you wish to 
-see the simple blockchain in operation'''
-
-'''
-# Create a new blockchain
-blockchain = Blockchain()
-
-# Add a few blocks as an example
-blockchain.add_block(Block(time.time(), "User1: Hello User2!"))
-blockchain.add_block(Block(time.time(), "User2: Hi User1!"))
-
-# Check if the blockchain is valid and display the chain
-validity = blockchain.is_chain_valid()
-chain = blockchain.display_chain()
-
-validity, chain
-'''
-
