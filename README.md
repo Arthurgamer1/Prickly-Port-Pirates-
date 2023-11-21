@@ -15,9 +15,15 @@ pip install matplotlib
 4. run the "RunEnterprises.bat" file to get both Enterprises running on two terminals.
 5. Start chatting between terminals!
 
-## Running the trials for spam messaging:
+## Running the trials for spam messaging & graphing:
 1. Make sure both peers are ready to message each other
 2. choose one terminal and type in the following
 ```bash
    spam [number_of_messages] [duration_of_time]
+```
+3. After running these the csv files will be fille with information to be able to use TimeGraph.py
+4. Open TimeGraph.py  (made for graphing and data collection therefore the code has to be hardcoded)
+5. Modify P2PGraph so that the parameter matches the number of entries in the csv file. (at the bottom of the code)
+``` bash
+   graph = P2PGraph(number_of_data_collected)
 ```
