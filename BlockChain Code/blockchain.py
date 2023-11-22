@@ -4,7 +4,6 @@ from datetime import datetime
 import json
 
 class Block:
-    
     def __init__(self, timestamp, data, previous_hash=''):
         '''
         Summary: This block class contructor is used to create a block
@@ -17,7 +16,7 @@ class Block:
         previous block. This represents the chain
         hash: also has it's own hash which is calculated using sha256.
 
-        Returns: no returned value. 
+        Returns: no returned value.
         '''
         self.timestamp = timestamp
         self.data = data
@@ -38,7 +37,6 @@ class Block:
 
         return block_dict
     
-
 class Blockchain:
     def __init__(self, existing_chain=None):
         if(existing_chain != None):
